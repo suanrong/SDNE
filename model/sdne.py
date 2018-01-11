@@ -145,6 +145,8 @@ class SDNE:
                 name = "decoder" + str(self.layers - i - 2)
                 assign(self.W[name], W.transpose())
                 assign(self.b[name], bv)
+        for i in myRBMs:
+            i.close()
         self.is_Init = True
 
     def __get_feed_dict(self, data):
