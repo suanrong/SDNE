@@ -43,6 +43,35 @@ def check_link_reconstruction(embedding, graph_data, check_index):
         ret.append(precisionK[index - 1])
     return ret
 
+def check_link_prediction(embedding, train_graph_data, origin_graph_data, check_index):
+    def get_precisionK(embedding, train_graph_data, origin_graph_data, max_index):
+        print "get precisionK..."
+        similarity = getSimilarity(embedding).reshape(-1)
+        sortedInd = np.argsort(similarity)
+        cur = 0
+        count = 0
+        precisionK = []
+        sortedInd = sortedInd[::-1]
+        N = train_graph_data.N
+        for ind in sortedInd:
+            x = ind / N
+            y = ind % N
+            if (x == y or train_graph_data.adj_matrix[x].toarray()[0][y] == 1):
+                continue 
+            count += 1
+            if (origin_graph_data.adj_matrix[x].toarray()[0][y] == 1):
+                cur += 1
+            precisionK.append(1.0 * cur / count)
+            if count > max_index:
+                break
+        return precisionK
+    precisionK = get_precisionK(embedding, train_graph_data, origin_graph_data, np.max(check_index))
+    ret = []
+    for index in check_index:
+        print "precisonK[%d] %.2f" % (index, precisionK[index - 1])
+        ret.append(precisionK[index - 1])
+    return ret
+ 
 
 def check_multi_label_classification(X, Y, test_ratio = 0.9):
     def small_trick(y_test, y_pred):

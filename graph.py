@@ -1,3 +1,4 @@
+import scipy.io as sio
 import numpy as np
 from utils.utils import *
 import random
@@ -30,13 +31,19 @@ class Graph(object):
             fin.close()
             if (ng_sample_ratio > 0):
                 self.__negativeSample(int(ng_sample_ratio*self.N), count, self.adj_matrix.copy())
-            self.order = np.arange(self.N)
             self.adj_matrix = self.adj_matrix.tocsr()
             print "getData done"
             print "Vertexes : %d  Edges : %d ngSampleRatio: %f" % (self.N, self.E, ng_sample_ratio)
         else:
+            try:
+                self.adj_matrix = sio.loadmat(file_path)["graph_sparse"].tocsr()
+            except:
+                self.adj_matrix = sio.loadmat(file_path)["traingraph_sparse"].tocsr()
+            self.N = len(self.adj_matrix.todense())
+            print "Vertexes : %d" % (self.N)
             pass
             #TODO read a mat file or something like that.
+        self.order = np.arange(self.N)
         
     def __negativeSample(self, ngSample, count, edges):
         print "negative Sampling"
