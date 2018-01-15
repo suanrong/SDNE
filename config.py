@@ -1,34 +1,39 @@
+import configparser
+
 class Config(object):
-    def __init__(self):
-        ## graph data
-        #self.file_path = "../Data_SDNE/Flickr2_1.txt"
-        self.file_path = "GraphData/blogCatalog3.txt"
-        #self.label_file_path = "GraphData/blogCatalog3-groups.txt"
+    def __init__(self, config_file):
+        conf = configparser.ConfigParser()
+        try:
+            conf.read(config_file)
+        except:
+            print "loading config: %s failed" % (config_file)
+        self.origin_graph_file = conf.get("Graph_Data", "origin_graph_file")
+        self.train_graph_file = conf.get("Graph_Data", "train_graph_file")
+        if conf.has_option("Graph_Data","label_file"):
+            self.label_file = conf.get("Graph_Data", "label_file")
+        
+
         ## embedding data
-        self.embedding_filename = "embeddingResult/blogCatolog" 
+        self.embedding_filename = conf.get("Graph_Data", "embedding_filename")
+
         ## hyperparameter
-        self.struct = [None, 1000, 128]
-        ## the loss func is  // gamma * L1 + alpha * L2 + reg * regularTerm // 
-        self.alpha = 500
-        self.gamma = 1
-        self.reg = 1
-        ## the weight balanced value to reconstruct non-zero element more.
-        self.beta = 10
+        self.struct = [int(i) for i in conf.get("Model_Setup", "struct").split(',')]
+        self.alpha = conf.getfloat("Model_Setup", "alpha")
+        self.gamma = conf.getfloat("Model_Setup", "gamma")
+        self.reg = conf.getfloat("Model_Setup", "reg")
+        self.beta = conf.getfloat("Model_Setup", "beta")
         
         ## para for training
-        #self.rN = 0.9
-        self.batch_size = 64
-        self.epochs_limit = 10
-        self.learning_rate = 0.01
-        self.display = 1
+        self.batch_size = conf.getint("Model_Setup", "batch_size")
+        self.epochs_limit = conf.getint("Model_Setup", "epochs_limit")
+        self.learning_rate = conf.getfloat("Model_Setup", "learning_rate")
+        self.display = conf.getint("Model_Setup", "display")
 
-        self.DBN_init = True
-        self.dbn_epochs = 500
-        self.dbn_batch_size = 64
-        self.dbn_learning_rate = 0.1
+        self.DBN_init = True 
+        self.dbn_epochs = conf.getint("Model_Setup","dbn_epochs")
+        self.dbn_batch_size = conf.getint("Model_Setup","dbn_batch_size")
+        self.dbn_learning_rate = conf.getfloat("Model_Setup","dbn_learning_rate")
+        
 
         self.sparse_dot = False
-        self.ng_sample_ratio = 0.0 # negative sample ratio
-        
-        #self.sample_ratio = 1
-        #self.sample_method = "node"
+        self.ng_sample_ratio = conf.getfloat("Model_Setup","ng_sample_ratio")
