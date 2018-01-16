@@ -37,3 +37,7 @@ class Config(object):
 
         self.sparse_dot = False
         self.ng_sample_ratio = conf.getfloat("Model_Setup","ng_sample_ratio")
+
+        ## output
+        self.model_saved = conf.get("Output", "model_saved_path")
+

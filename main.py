@@ -33,8 +33,10 @@ if __name__ == "__main__":
     config = Config(options.config_file)
     
     origin_graph_data = Graph(config.origin_graph_file, config.ng_sample_ratio)
-    train_graph_data = Graph(config.train_graph_file, config.ng_sample_ratio)
+    #train_graph_data = Graph(config.train_graph_file, config.ng_sample_ratio)
     
+    train_graph_data = origin_graph_data
+
     #load label for classification
     #graph_data.load_label_data(config.label_file)
     
@@ -72,8 +74,8 @@ if __name__ == "__main__":
                         break
 
                 print "Epoch : %d loss : %.3f" % (epochs, loss)
-                #check_link_reconstruction(embedding, train_graph_data, np.arange(100,1000,100))
-                result = check_link_prediction(embedding, train_graph_data, origin_graph_data, [10, 100, 500, 1000, 10000])
+                result = check_link_reconstruction(embedding, train_graph_data, [10, 100, 500, 1000, 10000])
+                #result = check_link_prediction(embedding, train_graph_data, origin_graph_data, [10, 100, 500, 1000, 10000])
                 #data = origin_data.sample(origin_data.N, with_label = True)
                 #check_multi_label_classification(model.get_embedding(data), data.label)
                 print >> fout, epochs, result
@@ -82,4 +84,5 @@ if __name__ == "__main__":
                 break
     embedding = model.get_embedding(train_graph_data.sample(origin_graph_data.N, do_shuffle = False))
     sio.savemat(config.embedding_filename + '-' + tt + '_embedding.mat',{'embedding':embedding})
+    model.save_model(config.model_saved_path)
     fout.close()
