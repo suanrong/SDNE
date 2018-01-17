@@ -9,10 +9,9 @@ The *SDNE* algorithm learns a representations for nodes in a graph. Please check
 
 ### Basic Usage
 ```
-$ python main.py
+$ python main.py -c config/xx.ini
 ```
-After execute the above command, You will get a embedding file named "xxx_embedding.mat"
->noted: your can just checkout and modify config.py or main.py to get what you want.
+>noted: your can just checkout and modify config file or main.py to get what you want.
 ### Input
 Your input graph data should be a **txt** file and be under **GraphData folder** 
 #### file format

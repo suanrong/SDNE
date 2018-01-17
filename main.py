@@ -90,4 +90,5 @@ if __name__ == "__main__":
             if epochs == config.epochs_limit:
                 print "exceed epochs limit terminating"
                 break
+    sio.savemat(path + '_embedding.mat',{'embedding':embedding})
     fout.close()
