@@ -109,11 +109,11 @@ class SDNE:
         return config.gamma * self.loss_1st + config.alpha * self.loss_2nd +self.loss_xxx
 
     def save_model(self, path):
-        saver = tf.train.Saver()
+        saver = tf.train.Saver(self.b.values() + self.W.values())
         saver.save(self.sess, path)
 
     def restore_model(self, path):
-        saver = tf.train.Saver()
+        saver = tf.train.Saver(self.b.values() + self.W.values())
         saver.restore(self.sess, path)
         self.is_Init = True
     
@@ -145,8 +145,6 @@ class SDNE:
                 name = "decoder" + str(self.layers - i - 2)
                 assign(self.W[name], W.transpose())
                 assign(self.b[name], bv)
-        for i in myRBMs:
-            i.close()
         self.is_Init = True
 
     def __get_feed_dict(self, data):

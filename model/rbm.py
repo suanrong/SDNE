@@ -9,7 +9,7 @@ class rbm:
         self.para = para
         self.sess = tf.Session()
         stddev = 1.0 / np.sqrt(shape[0])
-        self.W = tf.Variable(tf.random_normal([shape[0], shape[1]], stddev = stddev), name = "W")
+        self.W = tf.Variable(tf.random_normal([shape[0], shape[1]], stddev = stddev), name = "Wii")
         self.bv = tf.Variable(tf.zeros(shape[0]), name = "a")
         self.bh = tf.Variable(tf.zeros(shape[1]), name = "b")
         self.v = tf.placeholder("float", [None, shape[0]])
@@ -41,6 +41,4 @@ class rbm:
         return self.sess.run([self.W, self.bv, self.bh])
     def getH(self, data):
         return self.sess.run(self.h, feed_dict = {self.v : data})
-    def close(self):
-        return self.sess.close()
 

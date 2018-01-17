@@ -11,11 +11,24 @@ class Config(object):
         self.train_graph_file = conf.get("Graph_Data", "train_graph_file")
         if conf.has_option("Graph_Data","label_file"):
             self.label_file = conf.get("Graph_Data", "label_file")
+        else:
+            self.label_file = False
         
 
         ## embedding data
-        self.embedding_filename = conf.get("Graph_Data", "embedding_filename")
-
+        self.embedding_filename = conf.get("Output", "embedding_filename")
+        if conf.has_option("Output", "check_reconstruction"):
+            self.check_reconstruction = [int(i) for i in conf.get("Output", "check_reconstruction").split(',')]
+        else:
+            self.check_reconstruction = False
+        if conf.has_option("Output", "check_link_prediction"):
+            self.check_link_prediction = [int(i) for i in conf.get("Output", "check_link_prediction").split(',')]
+        else:
+            self.check_link_prediction = False
+        if conf.has_option("Output", "check_classification"):
+            self.check_classification = True
+        else:
+            self.check_classification = False
         ## hyperparameter
         self.struct = [int(i) for i in conf.get("Model_Setup", "struct").split(',')]
         self.alpha = conf.getfloat("Model_Setup", "alpha")
@@ -38,6 +51,4 @@ class Config(object):
         self.sparse_dot = False
         self.ng_sample_ratio = conf.getfloat("Model_Setup","ng_sample_ratio")
 
-        ## output
-        self.model_saved = conf.get("Output", "model_saved_path")
 

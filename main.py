@@ -22,6 +22,7 @@ import scipy.io as sio
 import time
 import copy
 from optparse import OptionParser
+import os
 
 if __name__ == "__main__":
     parser = OptionParser()
@@ -33,29 +34,33 @@ if __name__ == "__main__":
     config = Config(options.config_file)
     
     origin_graph_data = Graph(config.origin_graph_file, config.ng_sample_ratio)
-    #train_graph_data = Graph(config.train_graph_file, config.ng_sample_ratio)
+    train_graph_data = Graph(config.train_graph_file, config.ng_sample_ratio)
     
-    train_graph_data = origin_graph_data
+    #train_graph_data = origin_graph_data
 
-    #load label for classification
-    #graph_data.load_label_data(config.label_file)
+    if config.label_file:
+        #load label for classification
+        origin_graph_data.load_label_data(config.label_file)
     
     config.struct[0] = train_graph_data.N
     
-    model = SDNE(config)    
+    model = SDNE(config)
     model.do_variables_init(train_graph_data, config.DBN_init)
 
     epochs = 0
     batch_n = 0
     
-    #graph_data = graph_data.subgraph(config.sample_method, config.sample_ratio)
-    tt = time.ctime()
-    fout = open(config.embedding_filename + '-' + tt +  "-log.txt","w") 
+    
+    tt = time.ctime().replace(' ','-')
+    path = "./result/" + config.embedding_filename + '-' + tt
+    os.system("mkdir " + path)
+    fout = open(path + "/log.txt","w")  
+    model.save_model(path + '/epoch0.model')
+
     while (True):
         mini_batch = train_graph_data.sample(config.batch_size)
         loss = model.fit(mini_batch)
         batch_n += 1
-        #print "Epoch : %d, batch : %d, loss: %.3f" % (epochs, batch_n, loss)
         if train_graph_data.is_epoch_end:
             epochs += 1
             batch_n = 0
@@ -68,21 +73,21 @@ if __name__ == "__main__":
                     if embedding is None:
                         embedding = model.get_embedding(mini_batch)
                     else:
-                        embedding = np.vstack((embedding, model.get_embedding(mini_batch)))
-                
+                        embedding = np.vstack((embedding, model.get_embedding(mini_batch))) 
                     if train_graph_data.is_epoch_end:
                         break
 
                 print "Epoch : %d loss : %.3f" % (epochs, loss)
-                result = check_link_reconstruction(embedding, train_graph_data, [10, 100, 500, 1000, 10000])
-                #result = check_link_prediction(embedding, train_graph_data, origin_graph_data, [10, 100, 500, 1000, 10000])
-                #data = origin_data.sample(origin_data.N, with_label = True)
-                #check_multi_label_classification(model.get_embedding(data), data.label)
-                print >> fout, epochs, result
-            if epochs > config.epochs_limit:
+                if config.check_reconstruction:
+                    print >> fout, epochs, "reconstruction:", check_reconstruction(embedding, train_graph_data, config.check_reconstruction)
+                if config.check_link_prediction:
+                    print >> fout, epochs, "link_prediction:", check_link_prediction(embedding, train_graph_data, origin_graph_data, config.check_link_prediction)
+                if config.check_classification:
+                    data = origin_graph_data.sample(origin_graph_data.N, with_label = True)
+                    print >> fout, epochs, "classification", check_multi_label_classification(model.get_embedding(data), data.label)
+                fout.flush()
+                model.save_model(path + '/epoch' + str(epochs) + ".model")
+            if epochs == config.epochs_limit:
                 print "exceed epochs limit terminating"
                 break
-    embedding = model.get_embedding(train_graph_data.sample(origin_graph_data.N, do_shuffle = False))
-    sio.savemat(config.embedding_filename + '-' + tt + '_embedding.mat',{'embedding':embedding})
-    model.save_model(config.model_saved_path)
     fout.close()

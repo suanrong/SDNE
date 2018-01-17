@@ -16,7 +16,7 @@ def getSimilarity(result):
     print "getting similarity..."
     return np.dot(result, result.T)
     
-def check_link_reconstruction(embedding, graph_data, check_index):
+def check_reconstruction(embedding, graph_data, check_index):
     def get_precisionK(embedding, data, max_index):
         print "get precisionK..."
         similarity = getSimilarity(embedding).reshape(-1)
@@ -93,8 +93,7 @@ def check_multi_label_classification(X, Y, test_ratio = 0.9):
     
     micro = f1_score(y_test, y_pred, average = "micro")
     macro = f1_score(y_test, y_pred, average = "macro")
-    print "micro_f1: %.4f" % (micro)
-    print "macro_f1: %.4f" % (macro)
+    return "micro_f1: %.4f macro_f1 : %.4f" % (micro, macro)
     #############################################
 
 
