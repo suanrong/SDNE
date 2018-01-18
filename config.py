@@ -14,8 +14,12 @@ class Config(object):
         else:
             self.label_file = False
         
+        if conf.has_option("Model_Setup", "restore_model"):
+            self.restore_model = conf.get("Model_Setup", "restore_model")
+        else:
+            self.restore_model = False
 
-        ## embedding data
+        ## embedding data check
         self.embedding_filename = conf.get("Output", "embedding_filename")
         if conf.has_option("Output", "check_reconstruction"):
             self.check_reconstruction = [int(i) for i in conf.get("Output", "check_reconstruction").split(',')]

@@ -45,7 +45,7 @@ if __name__ == "__main__":
     config.struct[0] = train_graph_data.N
     
     model = SDNE(config)
-    model.do_variables_init(train_graph_data, config.DBN_init)
+    model.do_variables_init(train_graph_data)
 
     epochs = 0
     batch_n = 0
@@ -78,6 +78,7 @@ if __name__ == "__main__":
                         break
 
                 print "Epoch : %d loss : %.3f" % (epochs, loss)
+                print >>fout, "Epoch : %d loss : %.3f" % (epochs, loss)
                 if config.check_reconstruction:
                     print >> fout, epochs, "reconstruction:", check_reconstruction(embedding, train_graph_data, config.check_reconstruction)
                 if config.check_link_prediction:

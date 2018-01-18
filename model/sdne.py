@@ -117,13 +117,16 @@ class SDNE:
         saver.restore(self.sess, path)
         self.is_Init = True
     
-    def do_variables_init(self, data, DBN_init):
+    def do_variables_init(self, data):
         def assign(a, b):
             op = a.assign(b)
             self.sess.run(op)
         init = tf.global_variables_initializer()       
         self.sess.run(init)
-        if DBN_init:
+        if self.config.restore_model:
+            self.restore_model(self.config.restore_model)
+            print "restore model" + self.config.restore_model
+        elif self.config.DBN_init:
             shape = self.struct
             myRBMs = []
             for i in range(len(shape) - 1):
