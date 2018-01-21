@@ -22,8 +22,10 @@ class Graph(object):
             count = 0
             for line in fin.readlines():
                 line = line.strip().split()
-                self.adj_matrix[int(line[0]),int(line[1])] += 1
-                self.adj_matrix[int(line[1]),int(line[0])] += 1
+                x = int(line[0])
+                y = int(line[1])
+                self.adj_matrix[x, y] += 1
+                self.adj_matrix[y, x] += 1
                 self.links[count][0] = int(line[0])
                 self.links[count][1] = int(line[1])
                 self.links[count][2] = 1
@@ -39,7 +41,7 @@ class Graph(object):
                 self.adj_matrix = sio.loadmat(file_path)["graph_sparse"].tocsr()
             except:
                 self.adj_matrix = sio.loadmat(file_path)["traingraph_sparse"].tocsr()
-            self.N = len(self.adj_matrix.todense())
+            self.N, _ = self.adj_matrix.get_shape()
             print "Vertexes : %d" % (self.N)
             pass
             #TODO read a mat file or something like that.

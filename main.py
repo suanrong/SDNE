@@ -33,14 +33,14 @@ if __name__ == "__main__":
 
     config = Config(options.config_file)
     
-    origin_graph_data = Graph(config.origin_graph_file, config.ng_sample_ratio)
     train_graph_data = Graph(config.train_graph_file, config.ng_sample_ratio)
-    
-    #train_graph_data = origin_graph_data
+   
+    if config.origin_graph_file:
+        origin_graph_data = Graph(config.origin_graph_file, config.ng_sample_ratio)
 
     if config.label_file:
         #load label for classification
-        origin_graph_data.load_label_data(config.label_file)
+        train_graph_data.load_label_data(config.label_file)
     
     config.struct[0] = train_graph_data.N
     
@@ -84,12 +84,12 @@ if __name__ == "__main__":
                 if config.check_link_prediction:
                     print >> fout, epochs, "link_prediction:", check_link_prediction(embedding, train_graph_data, origin_graph_data, config.check_link_prediction)
                 if config.check_classification:
-                    data = origin_graph_data.sample(origin_graph_data.N, with_label = True)
-                    print >> fout, epochs, "classification", check_multi_label_classification(model.get_embedding(data), data.label)
+                    data = train_graph_data.sample(train_graph_data.N, with_label = True)
+                    print >> fout, epochs, "classification", check_multi_label_classification(embedding, data.label)
                 fout.flush()
                 model.save_model(path + '/epoch' + str(epochs) + ".model")
             if epochs == config.epochs_limit:
                 print "exceed epochs limit terminating"
                 break
-    sio.savemat(path + '_embedding.mat',{'embedding':embedding})
+    sio.savemat(path + '/embedding.mat',{'embedding':embedding})
     fout.close()

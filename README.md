@@ -13,10 +13,22 @@ $ python main.py -c config/xx.ini
 ```
 >noted: your can just checkout and modify config file or main.py to get what you want.
 ### Input
-Your input graph data should be a **txt** file and be under **GraphData folder** 
+Your input graph data should be a **txt** file or a **mat** file and be under **GraphData folder** 
 #### file format
-the txt file should be **edgelist** and **the first line** should be **N** , the number of vertexes and **E**, the number of edges
-#### A sample
+The txt file should be **edgelist** and **the first line** should be **N** , the number of vertexes and **E**, the number of edges
+
+The mat file should be the adjacent matrix. 
+
+you can save your adjacent matrix using the code below
+
+```
+import scipy.io as sio
+sio.savemat("xxx.mat", {"graph_sparse":your_adjacent_matrix})
+```
+
+It is recommended to use mat file and save the adjacent matrix in a sparse form.
+
+#### txt file sample
 	5242 14496
 	0 1
 	0 2

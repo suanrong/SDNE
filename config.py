@@ -7,8 +7,11 @@ class Config(object):
             conf.read(config_file)
         except:
             print "loading config: %s failed" % (config_file)
-        self.origin_graph_file = conf.get("Graph_Data", "origin_graph_file")
         self.train_graph_file = conf.get("Graph_Data", "train_graph_file")
+        if conf.has_option("Graph_Data", "origin_graph_file"):
+            self.origin_graph_file = conf.get("Graph_Data", "origin_graph_file")
+        else:
+            self.origin_graph_file = False
         if conf.has_option("Graph_Data","label_file"):
             self.label_file = conf.get("Graph_Data", "label_file")
         else:
@@ -20,6 +23,8 @@ class Config(object):
             self.restore_model = False
 
         ## embedding data check
+
+        self.display = conf.getint("Output", "display")
         self.embedding_filename = conf.get("Output", "embedding_filename")
         if conf.has_option("Output", "check_reconstruction"):
             self.check_reconstruction = [int(i) for i in conf.get("Output", "check_reconstruction").split(',')]
@@ -44,9 +49,8 @@ class Config(object):
         self.batch_size = conf.getint("Model_Setup", "batch_size")
         self.epochs_limit = conf.getint("Model_Setup", "epochs_limit")
         self.learning_rate = conf.getfloat("Model_Setup", "learning_rate")
-        self.display = conf.getint("Model_Setup", "display")
 
-        self.DBN_init = True 
+        self.DBN_init = conf.getboolean("Model_Setup", "dbn_init")
         self.dbn_epochs = conf.getint("Model_Setup","dbn_epochs")
         self.dbn_batch_size = conf.getint("Model_Setup","dbn_batch_size")
         self.dbn_learning_rate = conf.getfloat("Model_Setup","dbn_learning_rate")
