@@ -18,7 +18,6 @@ class Graph(object):
             self.E = int(firstLine[1])
             self.__is_epoch_end = False
             self.adj_matrix = dok_matrix((self.N, self.N), np.int_)
-            self.links = np.zeros([self.E + int(ng_sample_ratio*self.N) , 3], np.int_)
             count = 0
             for line in fin.readlines():
                 line = line.strip().split()
@@ -26,38 +25,31 @@ class Graph(object):
                 y = int(line[1])
                 self.adj_matrix[x, y] += 1
                 self.adj_matrix[y, x] += 1
-                self.links[count][0] = int(line[0])
-                self.links[count][1] = int(line[1])
-                self.links[count][2] = 1
                 count += 1
             fin.close()
-            if (ng_sample_ratio > 0):
-                self.__negativeSample(int(ng_sample_ratio*self.N), count, self.adj_matrix.copy())
             self.adj_matrix = self.adj_matrix.tocsr()
-            print "getData done"
-            print "Vertexes : %d  Edges : %d ngSampleRatio: %f" % (self.N, self.E, ng_sample_ratio)
         else:
             try:
                 self.adj_matrix = sio.loadmat(file_path)["graph_sparse"].tocsr()
             except:
                 self.adj_matrix = sio.loadmat(file_path)["traingraph_sparse"].tocsr()
             self.N, _ = self.adj_matrix.get_shape()
-            print "Vertexes : %d" % (self.N)
-            pass
-            #TODO read a mat file or something like that.
+            self.E = self.adj_matrix.count_nonzero() / 2
+        if (ng_sample_ratio > 0):
+            self.__negativeSample(int(ng_sample_ratio*self.E))
         self.order = np.arange(self.N)
+        print "Vertexes : %d  Edges : %d ngSampleRatio: %f" % (self.N, self.E, ng_sample_ratio)
         
-    def __negativeSample(self, ngSample, count, edges):
+    def __negativeSample(self, ngSample):
         print "negative Sampling"
         size = 0
         while (size < ngSample):
             xx = random.randint(0, self.N-1)
             yy = random.randint(0, self.N-1)
-            if (xx == yy or edges[xx][yy] != 0):
+            if (xx == yy or self.adj_matrix[xx, yy] != 0):
                 continue
-            edges[xx][yy] = -1
-            edges[yy][xx] = -1
-            self.links[size + count] = [xx, yy, -1]
+            self.adj_matrix[xx, yy] = -1
+            self.adj_matrix[yy, xx] = -1
             size += 1
         print "negative Sampling done"
         

@@ -46,6 +46,16 @@ if __name__ == "__main__":
     
     model = SDNE(config)
     model.do_variables_init(train_graph_data)
+    embedding = None
+    while (True):
+        mini_batch = train_graph_data.sample(config.batch_size, do_shuffle = False)
+        if embedding is None:
+            embedding = model.get_embedding(mini_batch)
+        else:
+            embedding = np.vstack((embedding, model.get_embedding(mini_batch))) 
+        if train_graph_data.is_epoch_end:
+            break
+    
 
     epochs = 0
     batch_n = 0
@@ -57,6 +67,8 @@ if __name__ == "__main__":
     fout = open(path + "/log.txt","w")  
     model.save_model(path + '/epoch0.model')
 
+    sio.savemat(path + '/embedding.mat',{'embedding':embedding})
+    print "!!!!!!!!!!!!!"
     while (True):
         mini_batch = train_graph_data.sample(config.batch_size)
         loss = model.fit(mini_batch)
