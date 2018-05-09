@@ -29,7 +29,7 @@ if __name__ == "__main__":
     parser.add_option("-c",dest = "config_file", action = "store", metavar = "CONFIG FILE")
     options, _ = parser.parse_args()
     if options.config_file == None:
-        options.config_file = 'config.ini'
+        raise IOError("no config file specified")
 
     config = Config(options.config_file)
     
