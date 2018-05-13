@@ -96,7 +96,7 @@ if __name__ == "__main__":
                 if config.check_link_prediction:
                     print >> fout, epochs, "link_prediction:", check_link_prediction(embedding, train_graph_data, origin_graph_data, config.check_link_prediction)
                 if config.check_classification:
-                    data = train_graph_data.sample(train_graph_data.N, with_label = True)
+                    data = train_graph_data.sample(train_graph_data.N, do_shuffle = False,  with_label = True)
                     print >> fout, epochs, "classification", check_multi_label_classification(embedding, data.label)
                 fout.flush()
                 model.save_model(path + '/epoch' + str(epochs) + ".model")
