@@ -103,10 +103,10 @@ class SDNE:
         self.loss_1st = get_1st_loss(self.H, self.adjacent_matriX)
         self.loss_xxx = tf.reduce_sum(tf.pow(self.X_reconstruct,2)) 
         # we don't need the regularizer term, since we have nagetive sampling.
-        #self.loss_reg = get_reg_loss(self.W, self.b) 
-        #return config.gamma * self.loss_1st + config.alpha * self.loss_2nd + config.reg * self.loss_reg
+        self.loss_reg = get_reg_loss(self.W, self.b) 
+        return config.gamma * self.loss_1st + config.alpha * self.loss_2nd + config.reg * self.loss_reg
         
-        return config.gamma * self.loss_1st + config.alpha * self.loss_2nd +self.loss_xxx
+        #return config.gamma * self.loss_1st + config.alpha * self.loss_2nd +self.loss_xxx
 
     def save_model(self, path):
         saver = tf.train.Saver(self.b.values() + self.W.values())

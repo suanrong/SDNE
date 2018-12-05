@@ -1,4 +1,0 @@
-Epoch : 2 loss : 1114285998.062
-2 reconstruction: [0.3, 0.09, 0.028, 0.02, 0.0094]
-2 link_prediction: [0.0, 0.0, 0.0, 0.0, 0.0]
-2 classification micro_f1: 0.1320 macro_f1 : 0.0341

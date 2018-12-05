@@ -25,6 +25,7 @@ from optparse import OptionParser
 import os
 
 if __name__ == "__main__":
+    os.environ["CUDA_VISIBLE_DEVICES"] = '1'
     parser = OptionParser()
     parser.add_option("-c",dest = "config_file", action = "store", metavar = "CONFIG FILE")
     options, _ = parser.parse_args()
@@ -70,12 +71,7 @@ if __name__ == "__main__":
     sio.savemat(path + '/embedding.mat',{'embedding':embedding})
     print "!!!!!!!!!!!!!"
     while (True):
-        mini_batch = train_graph_data.sample(config.batch_size)
-        loss = model.fit(mini_batch)
-        batch_n += 1
         if train_graph_data.is_epoch_end:
-            epochs += 1
-            batch_n = 0
             loss = 0
             if epochs % config.display == 0:
                 embedding = None
@@ -103,5 +99,9 @@ if __name__ == "__main__":
             if epochs == config.epochs_limit:
                 print "exceed epochs limit terminating"
                 break
+            epochs += 1
+        mini_batch = train_graph_data.sample(config.batch_size)
+        loss = model.fit(mini_batch)
+
     sio.savemat(path + '/embedding.mat',{'embedding':embedding})
     fout.close()
